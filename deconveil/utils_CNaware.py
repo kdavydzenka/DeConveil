@@ -1,3 +1,4 @@
+import os
 import multiprocessing
 import warnings
 from math import ceil
@@ -19,6 +20,8 @@ from scipy.special import gammaln  # type: ignore
 from scipy.special import polygamma  # type: ignore
 from scipy.stats import norm  # type: ignore
 from sklearn.linear_model import LinearRegression  # type: ignore
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 from deconveil.grid_search import grid_fit_beta
 
@@ -548,3 +551,116 @@ def nbinomFn(
 
     return prior - nll
 
+
+
+def process_results(file_path, method, lfc_cut = 1.0, pval_cut = 0.05):
+    df = pd.read_csv(file_path, index_col=0)
+    df['isDE'] = (np.abs(df['log2FoldChange']) >= lfc_cut) & (df['padj'] <= pval_cut)
+    df['DEtype'] = np.where(
+        ~df['isDE'], 
+        "n.s.", 
+        np.where(df['log2FoldChange'] > 0, "Up-reg", "Down-reg")
+    )
+    df['method'] = method
+    return df[['log2FoldChange', 'padj', 'isDE', 'DEtype', 'method']]
+    
+
+def define_gene_groups(res_joint):
+    DSGs = res_joint[
+        ((res_joint['DEtype_naive'] == "Up-reg") & (res_joint['DEtype_aware'] == "n.s.")) |
+        ((res_joint['DEtype_naive'] == "Down-reg") & (res_joint['DEtype_aware'] == "n.s."))
+    ].assign(gene_category='DSGs')
+    
+    DIGs = res_joint[
+        ((res_joint['DEtype_naive'] == "Up-reg") & (res_joint['DEtype_aware'] == "Up-reg")) |
+        ((res_joint['DEtype_naive'] == "Down-reg") & (res_joint['DEtype_aware'] == "Down-reg"))
+    ].assign(gene_category='DIGs')
+             
+    DCGs = res_joint[
+        ((res_joint['DEtype_naive'] == "n.s.") & (res_joint['DEtype_aware'] == "Up-reg")) |
+        ((res_joint['DEtype_naive'] == "n.s.") & (res_joint['DEtype_aware'] == "Down-reg"))
+    ].assign(gene_category='DCGs')
+             
+    non_DEGs = res_joint[
+        (res_joint['DEtype_naive'] == "n.s.") & (res_joint['DEtype_aware'] == "n.s.")
+    ].assign(gene_category='non-DEGs')
+             
+    return {
+        "DSGs": DSGs,
+        "DIGs": DIGs,
+        "DCGs": DCGs,
+        "non_DEGs": non_DEGs
+    }
+
+
+def generate_volcano_plot(plot_data, lfc_cut=1.0, pval_cut=0.05, xlim=None, ylim=None):
+    plot_data['gene_group'] = plot_data['gene_group'].astype('category')
+    
+    # Define gene group colors
+    gene_group_colors = {
+        "DIGs": "#8F3931FF",
+        "DSGs": "#FFB977",
+        "DCGs": "#FFC300"
+    }
+
+    # Create a FacetGrid for faceted plots
+    g = sns.FacetGrid(
+        plot_data, 
+        col="method", 
+        margin_titles=True, 
+        hue="gene_group", 
+        palette=gene_group_colors, 
+        sharey=False, 
+        sharex=True
+    )
+
+    
+    # Add points for "DIGs" 
+    g.map_dataframe(
+        sns.scatterplot, 
+        x="log2FC", 
+        y="-log10(padj)", 
+        alpha=0.1, 
+        size=0.5, 
+        legend=False, 
+        data=plot_data[plot_data['gene_group'].isin(["DIGs"])]
+    )
+
+    # Add points for "DSGs" and "DCGs"
+    g.map_dataframe(
+        sns.scatterplot, 
+        x="log2FC", 
+        y="-log10(padj)", 
+        alpha=1.0, 
+        size=3.0, 
+        legend=False, 
+        data=plot_data[plot_data['gene_group'].isin(["DSGs", "DCGs"])]
+    )
+    
+    # Add vertical and horizontal dashed lines
+    for ax in g.axes.flat:
+        ax.axvline(x=-lfc_cut, color="gray", linestyle="dashed")
+        ax.axvline(x=lfc_cut, color="gray", linestyle="dashed")
+        ax.axhline(y=-np.log10(pval_cut), color="gray", linestyle="dashed")
+        
+        if xlim:
+            ax.set_xlim(xlim)
+        if ylim:
+            ax.set_ylim(ylim)
+    
+    # Set axis labels
+    g.set_axis_labels("Log2 FC", "-Log10 P-value")
+    
+    # Add titles, legends, and customize
+    g.add_legend(title="Gene category")
+    g.set_titles(row_template="{row_name}", col_template="{col_name}")
+    g.tight_layout()
+    
+    # Adjust font sizes for better readability
+    for ax in g.axes.flat:
+        ax.tick_params(axis='both', labelsize=12)
+        ax.set_xlabel("Log2 FC", fontsize=14)
+        ax.set_ylabel("-Log10 P-value", fontsize=14)
+    
+    # Save or display the plot
+    plt.show()
