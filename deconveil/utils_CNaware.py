@@ -664,3 +664,49 @@ def generate_volcano_plot(plot_data, lfc_cut=1.0, pval_cut=0.05, xlim=None, ylim
     
     # Save or display the plot
     plt.show()
+
+
+def plot_cnv_hist(cnv_mean, binwidth=0.2):
+    """
+    Plots a histogram of the CNV mean distribution.
+
+    Parameters:
+        cnv_mean (pd.Series or list): The CNV mean values to plot.
+        binwidth (float): The bin width for the histogram.
+    """
+    # Convert to a DataFrame if it's not already
+    if isinstance(cnv_mean, list):
+        cnv_mean = pd.DataFrame({'cnv_mean': cnv_mean})
+    elif isinstance(cnv_mean, pd.Series):
+        cnv_mean = cnv_mean.to_frame(name='cnv_mean')
+
+    # Create the histogram plot
+    plt.figure(figsize=(5, 4))
+    sns.histplot(
+        cnv_mean['cnv_mean'],
+        bins=int((cnv_mean['cnv_mean'].max() - cnv_mean['cnv_mean'].min()) / binwidth),
+        kde=False,
+        color="#F39B7F",
+        edgecolor="black",
+        alpha=0.7
+    )
+
+    # Add labels and titles
+    plt.title("", fontsize=14)
+    plt.xlabel("CN state", fontsize=14, labelpad=8)
+    plt.ylabel("Frequency", fontsize=14, labelpad=8)
+
+    # Customize the appearance of axes
+    plt.xticks(fontsize=12, color="black", rotation=45, ha="right")
+    plt.yticks(fontsize=12, color="black")
+    plt.gca().spines["top"].set_visible(False)
+    plt.gca().spines["right"].set_visible(False)
+    plt.gca().spines["left"].set_linewidth(1)
+    plt.gca().spines["bottom"].set_linewidth(1)
+
+    # Add a grid
+    plt.grid(visible=False)
+
+    # Show the plot
+    plt.tight_layout()
+    plt.show()
