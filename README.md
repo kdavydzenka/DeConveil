@@ -3,8 +3,11 @@
 DeConveil is a computational method for the Differential Gene Expression testing that explicitly integrates gene Copy Number data into statistical framework making statistical adjustments to traditional methods.
 This approach adjusts for dosage effects and categorizes genes as *dosage-sensitive (DSG)*, *dosage-insensitive (DIG)*, and *dosage-compensated (DCG)*.
 
+
 **Pre-required installations before running DeConveil** 
+
 Python libraries are required to be installed: *pydeseq2*
+
 
 **How to install DeConveil**
 
@@ -12,12 +15,15 @@ Python libraries are required to be installed: *pydeseq2*
 
 
 **Input data**
+
 DeConveil requires two matched input matrices: mRNA read counts (normal and tumor samples) and absolute CN values (for normal diploid samples we assign CN 2). Example of CN data: 1,2,3,4,5,6. Each value of CN we divide by 2: CN/2. Example of input data is shown in *test_deconveil* Jupyter Notebook.
 
 
 **Output data**
+
 `res_CNnaive.csv` and `res_CNaware.csv` data frames reporting *LogFC* and *p-value* for both methods.
 These data are further processed to separate gene groups using `defene_gene_groups()` function.
+
 
 
 
