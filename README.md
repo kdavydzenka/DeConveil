@@ -11,7 +11,7 @@ Python libraries are required to be installed: *pydeseq2*
 
 **How to install DeConveil**
 
-`git clone https://github.com/Katerina10-cloud/DeConveil.git`
+`git clone https://github.com/caravagnalab/DeConveil.git`
 
 
 **Input data**
