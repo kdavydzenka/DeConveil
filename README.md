@@ -1,13 +1,23 @@
 # DeConveil
 
-## Overview
+DeConveil is a computational method for the Differential Gene Expression testing that explicitly integrates gene Copy Number data into statistical framework making statistical adjustments to traditional methods.
+This approach adjusts for dosage effects and categorizes genes as *dosage-sensitive (DSG)*, *dosage-insensitive (DIG)*, and *dosage-compensated (DCG)*.
 
-The presence of biological signals coming from different sources and affecting gene expression make it desirable to take them into account in differential expression analysis to provide more comprehensive insight regarding transcriptional patterns of cancer. In DGE analysis between cancer and normal tissues gene expression variation can be both driven by CNV and by other independent regulatory mechanisms, e.g transcriptional factors (TF).
+**Pre-required installations before running DeConveil** 
+Python libraries are required to be installed: *pydeseq2*
+
+**How to install DeConveil**
+
+`git clone https://github.com/Katerina10-cloud/DeConveil.git`
 
 
-## Metodological design
-Our CN-aware approach directly integrates Copy Number (CN) data into *Generalized Linear Model (GLM)* statistical framework to model the *mean* of gene counts using *Negative Binomial* distribution as a *log linear function* of the covariates. The model assumes the linear relationship between the gene CN and expected mean.
-This method aims to separate genes whose expression is primarily driven by CNVs from those regulated by independent biological processes. This distinction is crucial in minimizing the confounding effects of CNVs, which can obscure true regulatory changes and lead to misinterpretations in traditional DGE analyses.
+**Input data**
+DeConveil requires two matched input matrices: mRNA read counts (normal and tumor samples) and absolute CN values (for normal diploid samples we assign CN 2). Example of CN data: 1,2,3,4,5,6. Each value of CN we divide by 2: CN/2. Example of input data is shown in *test_deconveil* Jupyter Notebook.
+
+
+**Output data**
+`res_CNnaive.csv` and `res_CNaware.csv` data frames reporting *LogFC* and *p-value* for both methods.
+These data are further processed to separate gene groups using `defene_gene_groups()` function.
 
 
 
