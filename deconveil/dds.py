@@ -184,10 +184,6 @@ class deconveil_fit:
         
         self.obsm={}
         self.obsm["design_matrix"] = self.design_matrix 
-
-        # Check that the design matrix has full rank
-        #self._check_full_rank_design()
-        
         self.min_mu = min_mu
         self.min_disp = min_disp
         self.n_obs=self.data["counts"].shape[0]
@@ -547,7 +543,6 @@ class deconveil_fit:
                 beta_tol=self.beta_tol,
             )
         mu_param_name = "_vst_mu_hat" if vst else "_mu_hat"
-        #disp_param_name = "vst_genewise_dispersions" if vst else "genewise_dispersions"
         disp_param_name = "genewise_dispersions"
 
         self.layers[mu_param_name] = np.full((self.n_obs, self.n_vars), np.nan)
@@ -595,9 +590,6 @@ class deconveil_fit:
          # Check that genewise dispersions are available. If not, compute them.
         if disp_param_name not in self.varm:
             self.fit_genewise_dispersions(vst)
-        
-        #if isinstance(self.varm["disp_param_name"], list):
-            #self.varm["disp_param_name"] = np.array(self.varm["disp_param_name"])
 
         if not self.quiet:
             print("Fitting dispersion trend curve...", file=sys.stderr)
@@ -727,7 +719,6 @@ class deconveil_fit:
         self.varm["_outlier_genes"]
         ]
         
-   
     
     def fit_LFC(self) -> None:
         """Fit log fold change (LFC) coefficients.
@@ -744,6 +735,7 @@ class deconveil_fit:
         design_matrix = self.obsm["design_matrix"].values
         counts=self.data["counts"].to_numpy()
         cnv=self.data["cnv"].to_numpy()
+        cnv = cnv / 2
         cnv = cnv + 0.1
 
         if not self.quiet:

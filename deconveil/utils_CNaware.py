@@ -113,17 +113,6 @@ def irls_glm(
             mu = np.maximum(cnv * size_factors * np.exp(np.clip(X @ beta, -30, 30)), min_mu)
             converged = res.success
 
-            #if not res.success and num_vars <= 2:
-                #beta = grid_fit_beta(
-                    #counts,
-                    #size_factors,
-                    #cnv,
-                    #X,
-                    #disp,
-                #)
-                #mu = np.maximum(cnv * size_factors * np.exp(X @ beta), min_mu)
-            #break
-
         beta = beta_hat
         #mu = np.maximum(cnv * size_factors * np.exp(X @ beta), min_mu)
         mu = np.maximum(cnv * size_factors * np.exp(np.clip(X @ beta, -30, 30)), min_mu)
