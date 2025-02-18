@@ -66,7 +66,6 @@ def irls_glm(
     dev_ratio = 1.0
 
     ridge_factor = np.diag(np.repeat(1e-6, num_vars))
-    #mu = np.maximum(cnv * size_factors * np.exp(X @ beta), min_mu)
     mu = np.maximum(cnv * size_factors * np.exp(np.clip(X @ beta, -30, 30)), min_mu)
     
     converged = True
@@ -82,13 +81,11 @@ def irls_glm(
             # If IRLS starts diverging, use L-BFGS-B
             def f(beta: np.ndarray) -> float:
                 # closure to minimize
-                #mu_ = np.maximum(cnv * size_factors * np.exp(X @ beta), min_mu)
                 mu_ = np.maximum(cnv * size_factors * np.exp(np.clip(X @ beta, -30, 30)), min_mu)
                 
                 return nb_nll(counts, mu_, disp) + 0.5 * (ridge_factor @ beta**2).sum()
 
             def df(beta: np.ndarray) -> np.ndarray:
-                #mu_ = np.maximum(cnv * size_factors * np.exp(X @ beta), min_mu)
                 mu_ = np.maximum(cnv * size_factors * np.exp(np.clip(X @ beta, -30, 30)), min_mu)
                 return (
                     -X.T @ counts
@@ -109,12 +106,10 @@ def irls_glm(
             )
             
             beta = res.x
-            #mu = np.maximum(cnv * size_factors * np.exp(X @ beta), min_mu)
             mu = np.maximum(cnv * size_factors * np.exp(np.clip(X @ beta, -30, 30)), min_mu)
             converged = res.success
 
         beta = beta_hat
-        #mu = np.maximum(cnv * size_factors * np.exp(X @ beta), min_mu)
         mu = np.maximum(cnv * size_factors * np.exp(np.clip(X @ beta, -30, 30)), min_mu)
         
         # Compute deviation
@@ -131,7 +126,6 @@ def irls_glm(
     
     # Return an UNthresholded mu 
     # Previous quantities are estimated with a threshold though
-    #mu = cnv * size_factors * np.exp(X @ beta)
     mu = np.maximum(cnv * size_factors * np.exp(np.clip(X @ beta, -30, 30)), min_mu)
     
     return beta, mu, H, converged
@@ -670,7 +664,7 @@ def plot_cnv_hist(cnv_mean, binwidth=0.2):
         cnv_mean = cnv_mean.to_frame(name='cnv_mean')
 
     # Create the histogram plot
-    plt.figure(figsize=(5, 4))
+    plt.figure(figsize=(5, 5))
     sns.histplot(
         cnv_mean['cnv_mean'],
         bins=int((cnv_mean['cnv_mean'].max() - cnv_mean['cnv_mean'].min()) / binwidth),
@@ -697,5 +691,118 @@ def plot_cnv_hist(cnv_mean, binwidth=0.2):
     plt.grid(visible=False)
 
     # Show the plot
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_stacked_bar(combined_data):
+    """
+    Creates a stacked bar plot of gene counts by CNV group for each tumor type.
+    
+    Parameters:
+    - combined_data: DataFrame containing the data to plot.
+    """
+    # Define CNV colors inside the function
+    cnv_colors = {
+        "loss": "#0000FF",
+        "neutral": "#808080",
+        "gain": "#00FF00",
+         "amplification": "#FF0000"
+    }
+    
+    tumor_types = combined_data['tumor_type'].unique()
+    
+    # Create subplots for each tumor type
+    fig, axes = plt.subplots(1, len(tumor_types), figsize=(5, 5), sharey=True)
+    
+    # If there's only one tumor type, axes will not be an array, so we convert it into a list
+    if len(tumor_types) == 1:
+        axes = [axes]
+    
+    for idx, tumor_type in enumerate(tumor_types):
+        ax = axes[idx]
+        tumor_data = combined_data[combined_data['tumor_type'] == tumor_type]
+        
+        # Create a table of counts for CNV group vs gene group
+        counts = pd.crosstab(tumor_data['gene_group'], tumor_data['cnv_group'])
+        
+        # Plot stacked bars
+        counts.plot(kind='bar', stacked=True, ax=ax, color=[cnv_colors[group] for group in counts.columns], width=0.6)
+
+        ax.set_title(tumor_type, fontsize=16)
+        ax.set_xlabel("")
+        ax.set_ylabel("Gene Counts", fontsize=16)
+        
+        # Customize axis labels and tick marks
+        ax.tick_params(axis='x', labelsize=16, labelcolor="black")
+        ax.tick_params(axis='y', labelsize=16, labelcolor="black")
+    
+    # Overall settings for layout and labels
+    plt.tight_layout()
+    plt.show()
+    
+
+def plot_percentage_bar(barplot_data):
+    """
+    Creates a bar plot showing the percentage of genes for each gene group across tumor types.
+    
+    Parameters:
+    - barplot_data: DataFrame containing 'gene_group', 'percentage', and 'Count' columns.
+    """
+    # Define the gene group colors inside the function
+    gene_group_colors = {
+        "DIGs": "#8F3931FF",
+        "DSGs": "#FFB977",
+        "DCGs": "#FFC300"
+    }
+
+    tumor_types = barplot_data['tumor_type'].unique()
+    
+    plt.figure(figsize=(5, 5))
+    sns.set(style="whitegrid")
+
+    # Create subplots for each tumor type
+    fig, axes = plt.subplots(1, len(tumor_types), figsize=(5, 5), sharey=True)
+    
+    # If only one tumor type, ensure axes is a list
+    if len(tumor_types) == 1:
+        axes = [axes]
+    
+    for idx, tumor_type in enumerate(tumor_types):
+        ax = axes[idx]
+        tumor_data = barplot_data[barplot_data['tumor_type'] == tumor_type]
+        
+        # Plot the percentage bar plot
+        sns.barplot(data=tumor_data, x="gene_group", y="percentage", hue="gene_group",
+                    palette=gene_group_colors, ax=ax, width=0.6)
+
+        # Add counts and percentages as labels
+        for p in ax.patches:
+            height = p.get_height()
+            gene_group = p.get_x() + p.get_width() / 2  # Get the x position of the patch (bar)
+
+            # Find the gene_group in the data based on its position
+            group_name = tumor_data.iloc[int(gene_group)]['gene_group']
+            count = tumor_data.loc[tumor_data['gene_group'] == group_name, 'Count'].values[0]
+            percentage = tumor_data.loc[tumor_data['gene_group'] == group_name, 'percentage'].values[0]
+
+            # Position the labels slightly above the bars
+            ax.text(p.get_x() + p.get_width() / 2, height + 0.5, f'{count} ({round(percentage, 1)}%)', 
+                    ha='center', va='bottom', fontsize=12, color="black")
+        
+        ax.set_title(tumor_type, fontsize=16)
+        ax.set_xlabel("")
+        ax.set_ylabel("Percentage of Genes", fontsize=16)
+
+        # Customize axis labels and tick marks
+        ax.tick_params(axis='x', labelsize=16, labelcolor="black", rotation=45)
+        ax.tick_params(axis='y', labelsize=16, labelcolor="black")
+
+        # Explicitly set the x-tick labels with proper rotation and alignment
+        for tick in ax.get_xticklabels():
+            tick.set_horizontalalignment('right')  # This ensures proper alignment for x-ticks
+            tick.set_rotation(45)
+
+    # Overall settings for layout and labels
     plt.tight_layout()
     plt.show()

@@ -1024,25 +1024,11 @@ class deconveil_fit:
 
         if sum(self.varm["replaced"] > 0):
             # Compute replacement counts: trimmed means * size_factors
-            #self.counts_to_refit = self[:, self.varm["replaced"]].copy()
-            #self.counts_to_refit = self.data["counts"][:, self.varm["replaced"]].copy()
 
             self.counts_to_refit = pd.DataFrame(
                 self.data["counts"][:, self.varm["replaced"]], 
                 columns=self.var_names[self.varm["replaced"]]
             )
-
-            #trim_base_mean = pd.DataFrame(
-                #cast(
-                    #np.ndarray,
-                    #trimmed_mean(
-                        #self.counts_to_refit / self.obsm["size_factors"][:, None],
-                        #trim=0.2,
-                        #axis=0,
-                    #),
-                #),
-                #index=self.counts_to_refit.var_names,
-            #)
 
             trim_base_mean = pd.DataFrame(
                 cast(
@@ -1055,22 +1041,6 @@ class deconveil_fit:
                 ),
                 index=self.counts_to_refit.columns  # Use .columns instead of .var_names
             )
-
-            #replacement_counts = (
-                #pd.DataFrame(
-                    #trim_base_mean.values * self.obsm["size_factors"],
-                    #index=self.counts_to_refit.var_names,
-                    #columns=self.counts_to_refit.obs_names,
-                #)
-                #.astype(int)
-                #.T
-            #)
-
-            #self.counts_to_refit.data["counts"][
-                #self.obsm["replaceable"][:, None] & idx[:, self.varm["replaced"]]
-            #] = replacement_counts.values[
-                #self.obsm["replaceable"][:, None] & idx[:, self.varm["replaced"]]
-            #]
 
             replacement_counts = (
                 pd.DataFrame(
