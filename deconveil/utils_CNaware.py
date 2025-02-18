@@ -738,6 +738,7 @@ def plot_stacked_bar(combined_data):
         ax.tick_params(axis='y', labelsize=16, labelcolor="black")
     
     # Overall settings for layout and labels
+    plt.xticks(fontsize=12, color="black", rotation=45, ha="right")
     plt.tight_layout()
     plt.show()
     
