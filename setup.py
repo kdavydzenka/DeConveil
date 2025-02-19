@@ -12,7 +12,7 @@ setup(
     author="Katsiaryna Davydzenka",
     author_email="katiasen89@gmail.com",
     license="MIT",
-    packages=["DeConveil"],
+    packages=["deconveil"],
     python_requires=">=3.10.0",  
     install_requires=[
         "anndata>=0.8.0",
