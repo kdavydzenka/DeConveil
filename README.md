@@ -23,9 +23,9 @@ or `git clone https://github.com/caravagnalab/DeConveil.git`
 
 DeConveil requires the following input matrices: 
 
-    - matched mRNA read counts (normal and tumor samples) and absolute CN values (for normal diploid samples we assign CN=2), structured as *NxG* matrix, where *N* represents the number of samples and *G* represents the number of genes;
+    - matched mRNA read counts (normal and tumor samples) and absolute CN values (for normal diploid samples we assign CN=2), structured as NxG matrix, where N represents the number of samples and G represents the number of genes;
     
-    - a design matrix structured as an *N × F* matrix, where *N* is the number of samples and *F* is the number of features or covariates.
+    - a design matrix structured as an N × F matrix, where N is the number of samples and F is the number of features or covariates.
     
 Example of CN data for a given gene *g*:
 if CN = [1, 2, 3, 4, 5, 6], each CN value should be normalized by dividing by 2 (i.e., CN/2).
