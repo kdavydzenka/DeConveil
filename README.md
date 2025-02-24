@@ -1,9 +1,9 @@
 # DeConveil
 
 The goal of *DeConveil* is the extension of Differential Gene Expression testing by accounting for genome aneuploidy.
-This computational framework extends traditional DGE analysis by integrating Copy Number Variation (CNV) data.
+This computational framework extends traditional DGE analysis by integrating DNA Copy Number Variation (CNV) data.
 This approach adjusts for dosage effects and categorizes genes as *dosage-sensitive (DSG)*, *dosage-insensitive (DIG)*, and *dosage-compensated (DCG)*, separating the expression changes caused by CNVs from other alterations in transcriptional regulation.
-To perform this gene separation we need to perform DGE testing using both PyDESeq2 (CN-naive) and DeConveil (CN-aware) methods.
+To perform this gene separation we need to perform DGE testing using both *PyDESeq2 (CN-naive)* and *DeConveil (CN-aware) methods*.
 
 **Pre-required installations before running DeConveil** 
 
@@ -21,22 +21,21 @@ or `git clone https://github.com/caravagnalab/DeConveil.git`
 
 **Input data**
 
-DeConveil requires the following input matrices: matched mRNA read counts (normal and tumor samples) and absolute CN values (for normal diploid samples we assign CN 2), and design matrix. Example of CN data for a given gene *g*: [1,2,3,4,5,6]. Each value of CN we divide by 2: CN/2. Example of input data is shown in *test_deconveil* Jupyter Notebook.
+DeConveil requires the following input matrices: 
+    - matched mRNA read counts (normal and tumor samples) and absolute CN values (for normal diploid samples we assign CN=2), structured as *NxG* matrix, where *N* represents the number of samples and *G* represents the number of genes.
+    - a design matrix structured as an *N × F* matrix, where *N* is the number of samples and *F* is the number of features or covariates.
+    
+Example of CN data for a given gene *g*:
+if CN = [1, 2, 3, 4, 5, 6], each CN value should be normalized by dividing by 2 (i.e., CN/2).
 
+An example of the input data can be found in the *test_deconveil* Jupyter Notebook.
 
 **Output data**
 
-`res_CNnaive.csv` (for *PyDESeq2* method) and `res_CNaware.csv` (for *DeConveil*) data frames reporting *log2FC* and *p.adjust* for both methods.
-These data are further processed to separate gene groups using `define_gene_groups()` function included in DeConveil framework.
+`res_CNnaive.csv` (for *PyDESeq2* method) and `res_CNaware.csv` (for *DeConveil*) data frames reporting *log2FC* and *p.adjust* values for both methods.
+These data frames are further processed to separate gene groups using `define_gene_groups()` function included in DeConveil framework.
 
-The tutorial of the analysis workflow is shown in `test_deconveil.ipynb`
+A tutorial of the analysis workflow is available in `test_deconveil.ipynb`
 
 
 
-### References
-
-1. Michael I Love, Wolfgang Huber, and Simon Anders. Moderated estimation of fold change and dispersion for rna-seq data with deseq2. Genome biology, 15(12):1–21, 2014. doi:10.1186/s13059-014-0550-8.
-
-2. Boris Muzellec, Maria Telenczuk, Vincent Cabeli, and Mathieu Andreux. Pydeseq2: a python package for bulk rna-seq differential expression analysis. bioRxiv, pages 2022–12, 2022. doi:10.1101/2022.12.14.520412.
-
-3. Anqi Zhu, Joseph G Ibrahim, and Michael I Love. Heavy-tailed prior distributions for sequence count data: removing the noise and preserving large differences. Bioinformatics, 35(12):2084–2092, 2019. doi:10.1093/bioinformatics/bty895.
