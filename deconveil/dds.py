@@ -1,11 +1,7 @@
 import sys
 import time
 import warnings
-from typing import List
-from typing import Literal
-from typing import Optional
-from typing import Union
-from typing import cast
+from typing import List, Literal, Optional, Union, cast
 
 import numpy as np
 import pandas as pd
@@ -16,11 +12,11 @@ from scipy.stats import trim_mean  # type: ignore
 
 from deconveil.default_inference import DefInference                              
 from deconveil.inference import Inference                                     
-from deconveil import utils_CNaware
-from deconveil.utils_CNaware import fit_rough_dispersions
-from deconveil.utils_CNaware import fit_moments_dispersions2
-from deconveil.utils_CNaware import grid_fit_beta
-from deconveil.utils_CNaware import irls_glm
+from deconveil import utils_fit
+from deconveil.utils_fit import fit_rough_dispersions
+from deconveil.utils_fit import fit_moments_dispersions2
+from deconveil.utils_fit import grid_fit_beta
+from deconveil.utils_fit import irls_glm
 
 from pydeseq2.preprocessing import deseq2_norm_fit
 from pydeseq2.preprocessing import deseq2_norm_transform
