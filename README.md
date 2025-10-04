@@ -1,4 +1,4 @@
-# DeConveil <a href="caravagnalab.github.io/DeConveil"><img src="docs/deconveil_logo.png" align="right" height="139" /></a>
+# DeConveil <a href="caravagnalab.github.io/DeConveil"><img src="docs/deconveil_logo.png" align="right" height="150" /></a>
 
 The goal of *DeConveil* is the extension of Differential Gene Expression testing by accounting for genome aneuploidy.
 This computational framework extends traditional DGE analysis by integrating DNA Copy Number Variation (CNV) data.
@@ -46,9 +46,9 @@ A tutorial of the analysis workflow is available in `test_deconveil.ipynb`
 
 #### Citation
 
-[![doi:10.1101/2025.03.29.646108 ](http://img.shields.io/badge/doi-10.1101/2025.03.29.646108 -red.svg)](https://doi.org/10.1101/2025.03.29.646108)
+[![](http://img.shields.io/badge/doi-10.1101/2025.03.29.646108-red.svg)](https://doi.org/10.1101/2025.03.29.646108)
 
-If you use `DeConveil`, please cite:
+If you use `DeConveil`, cite:
 
 K. Davydzenka, G. Caravagna, G. Sanguinetti. Extending differential gene expression testing to handle genome aneuploidy in cancer. [bioRxiv preprint] (https://doi.org/10.1101/2025.03.29.646108), 2025.
 
