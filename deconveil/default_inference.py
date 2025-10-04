@@ -1,17 +1,13 @@
-from typing import Literal
-from typing import Optional
-from typing import Tuple
+from typing import Literal, Optional, Tuple
 
 import numpy as np
 import pandas as pd
-from joblib import Parallel  # type: ignore
-from joblib import delayed
-from joblib import parallel_backend
+from joblib import Parallel, delayed, parallel_backend  # type: ignore
 from scipy.optimize import minimize  # type: ignore
 
 from deconveil import inference
-from deconveil import utils_CNaware 
-from deconveil.utils_CNaware import fit_lin_mu
+from deconveil import utils_fit 
+from deconveil.utils_fit import fit_lin_mu
 
 from pydeseq2 import utils
 from pydeseq2.utils import get_num_processes
@@ -42,8 +38,8 @@ class DefInference(inference.Inference):
         Joblib backend.
     """
     
-    fit_rough_dispersions = staticmethod(utils_CNaware.fit_rough_dispersions)  # type: ignore
-    fit_moments_dispersions2 = staticmethod(utils_CNaware.fit_moments_dispersions2)  # type: ignore
+    fit_rough_dispersions = staticmethod(utils_fit.fit_rough_dispersions)  # type: ignore
+    fit_moments_dispersions2 = staticmethod(utils_fit.fit_moments_dispersions2)  # type: ignore
     
     def __init__(
         self,
@@ -79,7 +75,7 @@ class DefInference(inference.Inference):
                     verbose=self._joblib_verbosity,
                     batch_size=self._batch_size,
                 )(
-                    delayed(utils_CNaware.fit_lin_mu)(
+                    delayed(utils_fit.fit_lin_mu)(
                         counts=counts[:, i],
                         size_factors=size_factors,
                         design_matrix=design_matrix,
@@ -110,7 +106,7 @@ class DefInference(inference.Inference):
                 verbose=self._joblib_verbosity,
                 batch_size=self._batch_size,
             )(
-                delayed(utils_CNaware.irls_glm)(
+                delayed(utils_fit.irls_glm)(
                     counts=counts[:, i],
                     size_factors=size_factors,
                     design_matrix=design_matrix,
@@ -262,7 +258,7 @@ class DefInference(inference.Inference):
                 verbose=self._joblib_verbosity,
                 batch_size=self._batch_size,
             )(
-                delayed(utils_CNaware.nbinomGLM)(
+                delayed(utils_fit.nbinomGLM)(
                     design_matrix=design_matrix,
                     counts=counts[:, i],
                     cnv=cnv[:, i],
@@ -278,7 +274,3 @@ class DefInference(inference.Inference):
         res = zip(*res)
         lfcs, inv_hessians, l_bfgs_b_converged_ = (np.array(m) for m in res)
         return lfcs, inv_hessians, l_bfgs_b_converged_
-
-
-
-
