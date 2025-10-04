@@ -3,7 +3,7 @@ from typing import Optional
 import numpy as np
 from scipy.special import gammaln  # type: ignore
 
-from deconveil import utils_CNaware
+from deconveil import utils_fit
 
 
 def grid_fit_beta(
@@ -156,7 +156,7 @@ def grid_fit_shrink_beta(
     def loss(beta: np.ndarray) -> float:
         # closure to minimize
         return (
-            utils_CNaware.nbinomFn(
+            utils_fit.nbinomFn(
                 beta,
                 design_matrix,
                 counts,

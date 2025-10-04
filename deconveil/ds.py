@@ -1,8 +1,6 @@
 import sys
 import time
-from typing import List
-from typing import Literal
-from typing import Optional
+from typing import List, Literal, Optional
 
 import numpy as np
 import pandas as pd
