@@ -1,8 +1,6 @@
 from abc import ABC
 from abc import abstractmethod
-from typing import Literal
-from typing import Optional
-from typing import Tuple
+from typing import Literal, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -366,8 +364,3 @@ class Inference(ABC):
             Whether L-BFGS-B converged for each optimization problem.
         """
         
-    
-
-     
-
-
