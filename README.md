@@ -50,7 +50,7 @@ A tutorial of the analysis workflow is available in `test_deconveil.ipynb`
 
 If you use `DeConveil`, cite:
 
-K. Davydzenka, G. Caravagna, G. Sanguinetti. Extending differential gene expression testing to handle genome aneuploidy in cancer. [bioRxiv preprint] (https://doi.org/10.1101/2025.03.29.646108), 2025.
+K. Davydzenka, G. Caravagna, G. Sanguinetti. Extending differential gene expression testing to handle genome aneuploidy in cancer. [bioRxiv preprint](https://doi.org/10.1101/2025.03.29.646108), 2025.
 
 
 #### Copyright and contacts
