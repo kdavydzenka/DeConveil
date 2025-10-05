@@ -1,6 +1,6 @@
 # DeConveil 
 
-<img src="docs/deconveil_logo.png" width="300">
+![logo](https://raw.githubusercontent.com/caravagnalab/DeConveil/main/docs/deconveil_logo.png)
 
 #
 [![pypi version](https://img.shields.io/pypi/v/DeConveil)](https://pypi.org/project/DeConveil)
