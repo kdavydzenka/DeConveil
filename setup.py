@@ -6,7 +6,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="DeConveil",
-    version="0.1.1",
+    version="0.1.2",
     description="An extension of PyDESeq2/DESeq2 designed to account for genome aneuploidy",
     url="https://github.com/caravagnalab/DeConveil",
     author="Katsiaryna Davydzenka",
