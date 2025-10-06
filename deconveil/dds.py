@@ -17,10 +17,10 @@ from deconveil.utils_fit import fit_rough_dispersions
 from deconveil.utils_fit import fit_moments_dispersions2
 from deconveil.utils_fit import grid_fit_beta
 from deconveil.utils_fit import irls_glm
+from deconveil.utils_fit import build_design_matrix
 
 from pydeseq2.preprocessing import deseq2_norm_fit
 from pydeseq2.preprocessing import deseq2_norm_transform
-from pydeseq2.utils import build_design_matrix
 from pydeseq2.utils import dispersion_trend
 from pydeseq2.utils import mean_absolute_deviation
 from pydeseq2.utils import n_or_more_replicates
