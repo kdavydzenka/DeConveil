@@ -18,6 +18,7 @@ from deconveil.utils_fit import fit_moments_dispersions2
 from deconveil.utils_fit import grid_fit_beta
 from deconveil.utils_fit import irls_glm
 from deconveil.utils_fit import build_design_matrix
+from deconveil.utils_processing import replace_underscores
 
 from pydeseq2.preprocessing import deseq2_norm_fit
 from pydeseq2.preprocessing import deseq2_norm_transform
@@ -25,7 +26,6 @@ from pydeseq2.utils import dispersion_trend
 from pydeseq2.utils import mean_absolute_deviation
 from pydeseq2.utils import n_or_more_replicates
 from pydeseq2.utils import nb_nll
-from pydeseq2.utils import replace_underscores
 from pydeseq2.utils import robust_method_of_moments_disp
 from pydeseq2.utils import test_valid_counts
 from pydeseq2.utils import trimmed_mean
