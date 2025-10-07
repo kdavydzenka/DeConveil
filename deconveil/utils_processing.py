@@ -5,9 +5,91 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import deconveil
 
 from typing import List, Literal, Optional, Dict, Any, cast
 
+
+
+def load_test_data(
+    modality: Literal["rna", "cnv", "metadata", "cnv_tumor"] = "rna",
+    dataset: Literal["tcga_brca"] = "tcga_brca",
+    debug: bool = False,
+    debug_seed: int = 42,
+) -> pd.DataFrame:
+    """Load TCGA-BRCA example data from the DeConveil package.
+
+    Parameters
+    ----------
+    modality : {"rna", "cnv", "metadata", "cnv_tumor"}
+        Type of data to load.
+
+    dataset : {"tcga_brca"}
+        Dataset name. Only "tcga_brca" is currently supported.
+
+    debug : bool, optional
+        If True, randomly subsample 10 samples and 100 features (if applicable).
+        Default is False.
+
+    debug_seed : int, optional
+        Random seed for reproducibility of debug subsampling. Default is 42.
+
+    Returns
+    -------
+    pandas.DataFrame
+        The requested data modality as a DataFrame.
+    """
+    assert modality in ["rna", "cnv", "metadata", "cnv_tumor"], (
+        "modality must be one of: 'rna', 'cnv', 'metadata', 'cnv_tumor'"
+    )
+    assert dataset in ["tcga_brca"], (
+        "dataset must be one of: 'tcga_brca'"
+    )
+
+    # Locate data within the package
+    datasets_path = Path(__file__).resolve().parent.parent / "datasets" / dataset
+
+    # Construct file paths
+    file_map = {
+        "rna": datasets_path / "rna.csv",
+        "cnv": datasets_path / "cnv.csv",
+        "metadata": datasets_path / "metadata.csv",
+        "cnv_tumor": datasets_path / "cnv_tumor.csv",
+    }
+
+    data_path = file_map[modality]
+    if not data_path.exists():
+        raise FileNotFoundError(f"Data file not found: {data_path}")
+
+    # Load the CSV
+    df = pd.read_csv(data_path, index_col=0)
+
+    # Apply debug mode subsampling
+    if debug:
+        df = df.sample(n=min(10, df.shape[0]), random_state=debug_seed)
+        if modality in ["rna", "cnv"]:
+            df = df.sample(n=min(100, df.shape[1]), axis=1, random_state=debug_seed)
+
+    return df
+
+
+def replace_underscores(factors: List[str]):
+    """Replace all underscores from strings in a list by hyphens.
+
+    To be used on design factors to avoid bugs due to the reliance on
+    ``str.split("_")`` in parts of the code.
+
+    Parameters
+    ----------
+    factors : list
+        A list of strings which may contain underscores.
+
+    Returns
+    -------
+    list
+        A list of strings in which underscores were replaced by hyphens.
+    """
+    return [factor.replace("_", "-") for factor in factors]
 
 
 def filter_low_count_genes(
